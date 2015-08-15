@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+
+  <head>
+    <title>Run Google Routes search</title>
+  </head>
+
+  <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+  <body>
+
+    <h1>
+      Run Routes Crawl
+    </h1>
+
+    <p>
+      You'll use source file: <input id="fileName" value="short.csv" placeholder="Enter filename"></input>.
+      <button onclick="changeFull()">Use full version</button>
+    </p>
+
+    <p>
+        <input type="radio" id = 'radioWest' name ="direction" value = "WestUrl" checked="checked">West
+        <input type="radio" id = 'radioEast' name ="direction" value = "EastUrl">East
+    </p>
+
+    <p>
+      This should run based off of packaged routes csv
+      <button onclick="runOperation()">
+        Run Operation
+      </button>
+    </p>
+
+    <p>
+      The current status is: <span id="status">Not run yet</span>.
+    </p>
+
+    <div id="downloadButton" hidden>
+      <h4>Congrats, everything finished</h4>
+      <button onclick="retrieveDone()">Download the resulting csv</button>
+    </div>
+
+    <div id="failed" hidden>
+      <h4>There was an internal error... Refresh</h4>
+    </div>
+
+  </body>
+
+  <script type="text/javascript">
+    var test;
+    var intervalGlobal = null;
+
+    function changeFull() {
+      $('#fileName').val('fullRoutes.csv');
+    };
+
+    function runOperation() {
+      animateStatus();
+      var url = 'run' + $('input[type=radio]:checked').val() + '/' + $('#fileName').val();
+        console.log(url, "-", url);
+      $.ajax({
+        url: url
+      }).done(function(response) {
+        clearInterval(intervalGlobal)
+        $('#status').text("Completed operation");
+
+        if (response.result) {
+          $('#downloadButton').show()
+        } else {
+          $('#failed').show()
+        }
+      });
+    }
+
+    function animateStatus() {
+      $('#status').text("Running operation");
+      var count = 1;
+      intervalGlobal = setInterval(function () {
+        var dots = Array(count).join(".");
+        if (count > 3) {
+          count = 1
+        } else {
+          count += 1
+        }
+        $('#status').text("Running operation" + dots)
+      }, 500);
+    };
+
+    function retrieveDone() {
+        console.log("Running")
+      $.ajax({
+        url: 'getoutput'
+      }).done(function(response) {
+        console.log("Response" , response)
+        test = response;
+        var a = document.createElement('a');
+        a.href = 'data:attachment/csv;charset=utf-8;base64,' + window.btoa(response);
+        a.target = '_blank';
+        a.download = 'outputA.csv';
+        document.body.appendChild(a);
+        a.click();
+      });
+    }
+
+  </script>
+
+</html>
