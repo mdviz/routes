@@ -86,11 +86,11 @@
     };
 
     function retrieveDone() {
-        console.log("Running")
+        console.log("Running");
       $.ajax({
         url: 'getoutput'
       }).done(function(response) {
-        console.log("Response" , response)
+        console.log("Response" , response);
         test = response;
         var a = document.createElement('a');
         a.href = 'data:attachment/csv;charset=utf-8;base64,' + window.btoa(response);
