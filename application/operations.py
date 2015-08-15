@@ -101,7 +101,6 @@ def runRoutes(fileName, directionUrl):
         travelData['nTime'] = (travelData.CurrentTime.apply(lambda x: produceTime(x)))
         
         travelData = travelData.sort(["Origin", "Destination"])
-        print travelData
         travelData.to_csv('application/static/out/outputA.csv', sep=',', encoding='utf-8')
 
         return True
